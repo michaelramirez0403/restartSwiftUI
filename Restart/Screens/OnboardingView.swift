@@ -8,6 +8,9 @@ import SwiftUI
 struct OnboardingView: View {
     // MARK: - PROPERTY
     @AppStorage("onboarding") var isOnboardingViewActive: Bool = true
+    @State private var buttonWidth: Double = UIScreen.main.bounds.width - 80
+    @State private var buttonOffset: CGFloat = 0
+    @State private var isAnimating: Bool = false
     // MARK: - BODY
     var body: some View {
         ZStack {
@@ -31,6 +34,14 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 10)
                 }//: HEADER
+                // MARK: HEADER ANIMATION
+                // TERNARY OPERATOR
+                // WHAT ? TRUE : FALSE
+                .opacity(isAnimating ? 1 : 0)
+                .offset(y: isAnimating ? 0 : -40)
+                .animation(.easeOut(duration: 1),
+                           value: isAnimating)
+                //: HEADER ANIMATION
                 // MARK: - CENTER
                 ZStack {
                     CircleGroupView(ShapeColor: .white,
@@ -38,6 +49,9 @@ struct OnboardingView: View {
                     Image("character-1")
                         .resizable()
                         .scaledToFit()
+                        .opacity(isAnimating ? 1 : 0)
+                        .animation(.easeOut(duration: 0.5),
+                                   value: isAnimating)
                 }//: - CENTER
                 // MARK: - FOOTER
                 ZStack {
@@ -59,7 +73,8 @@ struct OnboardingView: View {
                     HStack {
                         Capsule()
                             .fill(Color("ColorRed"))
-                            .frame(width: 80)
+                        // MARK: DEFORMED CAPSULE WIDTH
+                            .frame(width: buttonOffset + 80)
                         Spacer()
                     }
                     // 4. CIRCLE (DRAGGABLE)
@@ -78,18 +93,46 @@ struct OnboardingView: View {
                         .frame(width: 80,
                                height: 80,
                                alignment: .center)
-                        .onTapGesture {
-                            isOnboardingViewActive = false
-                        }
+                        .offset(x: buttonOffset)
+                        // MARK: DRAG GESTURE
+                        .gesture(
+                            DragGesture()
+                                .onChanged { gesture in
+                                    if gesture.translation.width > 0 &&
+                                        buttonOffset <= buttonWidth - 80 {
+                                        buttonOffset = gesture.translation.width
+                                    }
+                                }
+                                .onEnded { _ in
+                                    withAnimation(Animation.easeOut(duration: 0.4)) {
+                                        if buttonOffset > buttonWidth / 2 {
+                                            buttonOffset = buttonWidth - 80
+                                            isOnboardingViewActive = false
+                                        } else {
+                                            buttonOffset = 0
+                                        }
+                                    }
+                                }
+                        )//: GESTURE
                         Spacer()
                     }//: HSTACK
                 }//: - FOOTER
-                .frame(height: 80,
+                .frame(width: buttonWidth,
+                       height: 80,
                        alignment: .center)
                 .padding()
+                // MARK: FOOTER ANIMATION
+                .opacity(isAnimating ? 1 : 0)
+                .offset(y: isAnimating ? 0 : 40)
+                .animation(.easeInOut(duration: 1),
+                           value: isAnimating)
             } //: VSTACK
             .padding()
         }//: ZSTACK
+        //MARK: HEADER ANIMATION ISANIMATION EQUALS TRUE ONAPPEAR
+        .onAppear(perform: {
+            isAnimating = true
+        })
     }
 }
 #Preview {
