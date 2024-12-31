@@ -16,8 +16,7 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             Color(.white)
-                .ignoresSafeArea(.all,
-                                 edges: .all)
+                .ignoresSafeArea(.all, edges: .all)
             VStack(spacing: 20) {
                 // MARK: - HEADER
                 Spacer()
@@ -34,21 +33,22 @@ struct HomeView: View {
                             .repeatForever(),
                             value: isAnimating
                         )
-//                        .offset(x: imageOffset.width * 1.2, y: 0)
-//                        .rotationEffect(.degrees(Double(imageOffset.width / 20)))
-//                        .gesture(
-//                            DragGesture()
-//                                .onChanged { gesture in
-//                                    if abs(imageOffset.width) <= 150 {
-//                                        imageOffset = gesture.translation
-//                                    }
-//                                }
-//                                .onEnded({ _ in
-//                                    imageOffset = .zero
-//                                })
-//                        )
-//                        .animation(.easeInOut(duration: 1),
-//                                   value: imageOffset)
+                    //                MARK: Commented code
+                    //                        .offset(x: imageOffset.width * 1.2, y: 0)
+                    //                        .rotationEffect(.degrees(Double(imageOffset.width / 20)))
+                    //                        .gesture(
+                    //                            DragGesture()
+                    //                                .onChanged { gesture in
+                    //                                    if abs(imageOffset.width) <= 150 {
+                    //                                        imageOffset = gesture.translation
+                    //                                    }
+                    //                                }
+                    //                                .onEnded({ _ in
+                    //                                    imageOffset = .zero
+                    //                                })
+                    //                        )
+                    //                        .animation(.easeInOut(duration: 1),
+                    //                                   value: imageOffset)
                 }
                 // MARK: - CENTER
                 Text("The time that leads to mastery is dependent on the intensity of our focus.")
@@ -62,6 +62,8 @@ struct HomeView: View {
                 Button(action: {
                     // Some Action
                     withAnimation {
+                        playSound(sound: "success",
+                                  type: "m4a")
                         isOnboardingViewActive = true
                     }
                 }) {
@@ -82,6 +84,7 @@ struct HomeView: View {
                     isAnimating = true
                 })
             }
+            .preferredColorScheme(.white)
         }
     }
 }
