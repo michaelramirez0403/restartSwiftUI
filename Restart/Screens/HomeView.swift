@@ -84,7 +84,7 @@ struct HomeView: View {
                     isAnimating = true
                 })
             }
-            .preferredColorScheme(.white)
+            .preferredColorScheme(.light)
         }
     }
 }
