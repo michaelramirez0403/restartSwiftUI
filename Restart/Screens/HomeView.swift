@@ -12,6 +12,7 @@ struct HomeView: View {
     @AppStorage("onboarding") var isOnboardingViewActive: Bool = false
     @State private var isAnimating: Bool = false
     @State private var imageOffset: CGSize = .zero
+    let hapticFeedback = UINotificationFeedbackGenerator()
     // MARK: - BODY
     var body: some View {
         ZStack {
@@ -62,6 +63,7 @@ struct HomeView: View {
                 Button(action: {
                     // Some Action
                     withAnimation {
+                        hapticFeedback.notificationOccurred(.warning)
                         playSound(sound: "success",
                                   type: "m4a")
                         isOnboardingViewActive = true

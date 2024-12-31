@@ -12,6 +12,9 @@ struct OnboardingView: View {
     @State private var buttonOffset: CGFloat = 0
     @State private var isAnimating: Bool = false
     @State private var imageOffset: CGSize = .zero
+    @State private var indicatorOpacity: Double = 1.0
+    @State private var textTitle: String = "Share."
+    let hapticFeedback = UINotificationFeedbackGenerator()
     // MARK: - BODY
     var body: some View {
         ZStack {
@@ -21,10 +24,12 @@ struct OnboardingView: View {
                 // MARK: - HEADER
                 Spacer()
                 VStack() {
-                    Text("SHARE.")
+                    Text(textTitle)
                         .font(.system(size: 60))
                         .fontWeight(.heavy)
                         .foregroundStyle(.white)
+                        .transition(.opacity)
+                        .id(textTitle)
                     Text("""
                          It's not how much we give but
                          how much love we put into giving.
@@ -65,11 +70,19 @@ struct OnboardingView: View {
                                     if abs(imageOffset.width) <= 150 {
                                         imageOffset = gesture.translation
                                     }
+                                    withAnimation(.linear(duration: 0.5)) {
+                                        indicatorOpacity = 0
+                                        textTitle = "Give."
+                                    }
                                 }
                                 .onEnded({ _ in
                                     imageOffset = .zero
+                                    withAnimation(.linear(duration: 0.5)) {
+                                        indicatorOpacity = 0
+                                        textTitle = "Share."
+                                    }
                                 })
-                        )
+                        )//: GESTURE
                         .animation(.easeInOut(duration: 1),
                                    value: imageOffset)
                 }//: - CENTER
@@ -137,11 +150,13 @@ struct OnboardingView: View {
                                 .onEnded { _ in
                                     withAnimation(Animation.easeOut(duration: 0.4)) {
                                         if buttonOffset > buttonWidth / 2 {
+                                            hapticFeedback.notificationOccurred(.success)
                                             playSound(sound: "chimeup",
                                                       type: "mp3")
                                             buttonOffset = buttonWidth - 80
                                             isOnboardingViewActive = false
                                         } else {
+                                            hapticFeedback.notificationOccurred(.warning)
                                             buttonOffset = 0
                                         }
                                     }
